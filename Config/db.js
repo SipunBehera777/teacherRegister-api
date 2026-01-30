@@ -1,15 +1,11 @@
 const mysql = require("mysql2");
 
 const db = mysql.createConnection({
-    host: process.env.DB_HOST, // gondola.proxy.rlwy.net
-    port: Number(process.env.DB_PORT), // 20276
-    user: process.env.DB_USER, // root
-    password: process.env.DB_PASSWORD, // sAdsoWGGqHGlWXhQrcxMWbnaWMDKFuGp
-    database: process.env.DB_NAME, // railway
-    // This helps if the MySQL version uses a different auth method
-    authPlugins: {
-        mysql_native_password: () => () => Buffer.from(process.env.DB_PASSWORD)
-    }
+    // Force port to be a Number
+    host:"localhost",
+    user:"root",
+    password:"Sipun2006",
+    database:"teacher_db"
 });
 
 db.connect((err) => {
@@ -19,3 +15,5 @@ db.connect((err) => {
         console.log("✅ Database Connected!");
     }
 });
+
+module.exports = db;
