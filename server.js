@@ -20,7 +20,7 @@ const teacherRoutes = require("./Router/teacherRoutes");
 
 app.use("/api/teachers", teacherRoutes);
 
-const PORT=3002;
+const PORT = process.env.PORT || 3002;
 
 app.listen(PORT, () => {
   console.log(` Server running on port ${PORT}`);
