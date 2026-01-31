@@ -33,7 +33,7 @@ class Teacher {
       UPDATE teachers 
       SET full_name=?, gender=?, phone=?, email=?, designation=?, 
           department=?, employee_code=?, role=?
-      WHERE teacher_id=?
+      WHERE id=?
     `;
 
     db.query(
@@ -61,7 +61,7 @@ class Teacher {
 
   
   static delete(id, callback) {
-    const sql = `DELETE FROM teachers WHERE teacher_id=?`;
+    const sql = `DELETE FROM teachers WHERE id=?`;
     db.query(sql, [id], callback);
   }
 
