@@ -1,3 +1,6 @@
+const admin = require("../firebaseAdmin"); 
+const db = require("../Config/db");
+
 exports.firebaseLogin = async (req, res) => {
     try {
         const { token } = req.body;
