@@ -11,7 +11,7 @@ exports.firebaseLogin = async (req, res) => {
 
         // 2️⃣ Lookup user in MySQL using UID
         const [rows] = await db.promise().query(
-            "SELECT * FROM users WHERE firebase_uid = ?",
+            "SELECT * FROM teacher WHERE firebase_uid = ?",
             [uid]
         );
 
