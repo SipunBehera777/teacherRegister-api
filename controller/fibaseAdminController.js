@@ -26,7 +26,10 @@ exports.firebaseLogin = async (req, res) => {
         });
 
     } catch (error) {
-        console.error(error);
-        return res.status(401).json({ success: false, message: "Invalid Firebase token" });
+        console.error("VERIFY ERROR:", error);
+    return res.status(401).json({
+        success: false,
+        message: error.message
+    });
     }
 };
