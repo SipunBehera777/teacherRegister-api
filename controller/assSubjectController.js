@@ -6,11 +6,11 @@ exports.assignSubject = (req, res) => {
 
     const sql = `
         INSERT INTO assign_subject
-        (teacher_id, subject_id, section_id)
-        VALUES (?, ?, ?)
+        (college_id,teacher_id, subject_id, section_id,batch_id)
+        VALUES (?, ?, ?, ?, ?)
     `;
 
-    db.query(sql, [teacher_id, subject_id, section_id], (err, result) => {
+    db.query(sql, [college_id,teacher_id, subject_id, section_id,batch_id], (err, result) => {
 
         if (err) {
             return res.status(500).json({
