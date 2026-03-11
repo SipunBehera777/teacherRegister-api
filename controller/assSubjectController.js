@@ -2,7 +2,7 @@ const db = require("../Config/db");
 
 exports.assignSubject = (req, res) => {
 
-    const { teacher_id, subject_id, section_id } = req.body;
+    const {college_id, teacher_id, subject_id, section_id,batch_id } = req.body;
 
     const sql = `
         INSERT INTO assign_subject
