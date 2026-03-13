@@ -11,9 +11,10 @@ exports.startAttendance = (req, res) => {
       });
     }
 
+    
     res.json({
       success:true,
-      attendance_id:result.insertId,
+      attendance_id: result.attendance_id,
       message:"Attendance session started"
     });
 
