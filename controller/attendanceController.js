@@ -63,3 +63,11 @@ exports.getAttendanceHistory = (req, res) => {
   });
 
 };
+
+exports.editAttendance = (req, res) => {
+  const { attendance_id, students } = req.body;
+  Attendance.editAttendance(attendance_id, students, (err, result) => {
+    if (err) return res.status(500).json({ success:false, message:err.sqlMessage || err.message });
+    res.json({ success:true, message: result.message });
+  });
+};

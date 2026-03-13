@@ -1,5 +1,6 @@
 const db = require("../Config/db");
 
+
 class Attendance {
 
   // Create attendance session
@@ -74,6 +75,22 @@ class Attendance {
     db.query(sql, [attendance_id], callback);
   }
 
+
+
+  static editAttendance(attendance_id, students, callback) {
+    if (!students || students.length === 0) return callback(new Error("Student list empty"));
+
+    const sql = `UPDATE attendance_details SET status = ? WHERE attendance_id = ? AND student_id = ?`;
+    let completed = 0;
+
+    students.forEach(student => {
+      db.query(sql, [student.status, attendance_id, student.student_id], (err) => {
+        if (err) return callback(err);
+        completed++;
+        if (completed === students.length) callback(null, { message: "Attendance updated successfully" });
+      });
+    });
+  }
 }
 
 module.exports = Attendance;
