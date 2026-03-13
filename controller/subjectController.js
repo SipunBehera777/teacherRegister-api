@@ -21,14 +21,14 @@ exports.addSubject = (req, res) => {
 };
 
 exports.getSubjects = (req, res) => {
-  const { departmentId, semesterId } = req.params;
+  const { departmentId, semester} = req.params;
 
   const sql = `
     SELECT * FROM subjects
     WHERE department_id=? AND semester=?
   `;
 
-  db.query(sql, [departmentId, semesterId], (err, results) => {
+  db.query(sql, [departmentId, semester], (err, results) => {
            if (err) {
         return res.status(500).json({
           success: false,
