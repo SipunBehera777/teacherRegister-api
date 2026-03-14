@@ -42,27 +42,6 @@ exports.markAttendance = (req, res) => {
 
 };
 
-exports.getAttendanceHistory = (req, res) => {
-
-  const assignment_id = req.params.assignment_id;
-
-  Attendance.getHistory(assignment_id, (err, results) => {
-
-    if (err) {
-      return res.status(500).json({
-        success:false,
-        message:err.message
-      });
-    }
-
-    res.json({
-      success:true,
-      data:results
-    });
-
-  });
-
-};
 
 exports.editAttendance = (req, res) => {
   const { attendance_id, students } = req.body;

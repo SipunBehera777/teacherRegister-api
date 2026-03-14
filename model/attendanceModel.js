@@ -61,21 +61,10 @@ class Attendance {
   }
 
 
-  // Get students attendance for a session
-  static getSessionDetails(attendance_id, callback) {
-
-    const sql = `
-      SELECT 
-        ad.student_id,
-        ad.status
-      FROM attendance_details ad
-      WHERE ad.attendance_id = ?
-    `;
-
-    db.query(sql, [attendance_id], callback);
-  }
 
 
+
+  
 
   static editAttendance(attendance_id, students, callback) {
     if (!students || students.length === 0) return callback(new Error("Student list empty"));
@@ -91,6 +80,9 @@ class Attendance {
       });
     });
   }
+
+
+  
 }
 
 module.exports = Attendance;

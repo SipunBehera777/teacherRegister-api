@@ -6,10 +6,12 @@ router.post("/start", attendanceController.startAttendance);
 
 router.post("/mark", attendanceController.markAttendance);
 
-router.get("/history/:assignment_id", attendanceController.getAttendanceHistory);
+
 
 
 router.put("/edit", attendanceController.editAttendance);
+
+
 
 module.exports = router;
 

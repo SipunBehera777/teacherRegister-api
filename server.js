@@ -25,7 +25,8 @@ const assignmentRoutes = require("./Router/ass_subjectRoute");
 const attendanceRoutes = require("./Router/attendanceRouter");
 const authRoutes = require("./Router/authRoutes");
 
-
+const qrRoutes =
+require("./Router/qrAttendanceRouts");
 
 
 
@@ -44,6 +45,7 @@ app.use("/api/batches", require("./Router/batchRoutes"));
 app.use("/api/sections", require("./Router/sectionRoutes"));
 app.use("/api/groups", require("./Router/groupRoutes"));
 app.use("/api/subjects", require("./Router/subjectRoutes"));
+app.use("/api/attendance",qrRoutes);
 
 const PORT = 3306;
 
