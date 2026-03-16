@@ -5,8 +5,8 @@ const { v4: uuidv4 } = require("uuid");
 
 exports.startQRSession = (req, res) => {
 
-    var assignmentid = req.body.assignmentid;
-    var latitude = req.body.latitude;
+    var assignmentid = req.body.assignment_id;
+    var latitude = req.body.class_latitude;
     var longitude = req.body.longitude;
 
     if(!assignmentid){
@@ -19,14 +19,14 @@ exports.startQRSession = (req, res) => {
     var token = "QR_" + Date.now();
 
     var data = {
-        assignmentid: assignmentid,
+        assignment_id: assignmentid,
         date: new Date(),
         qr_token: token,
         start_time: new Date(),
         expiry_time: new Date(Date.now() + 15000),
-        latitude: latitude,
+        class_latitude: latitude,
         longitude: longitude,
-        radius: 50
+        class_radius: 50
     };
 
     QR.startSession(data,(err,result)=>{
