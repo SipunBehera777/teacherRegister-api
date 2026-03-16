@@ -3,7 +3,7 @@ const db = require("../Config/db");
 class QRAttendance{
 
   static startSession(data,callback){
-     const sql = "INSERT INTO attendance_sessions (assignmentid,date,qr_token,start_time,expiry_time,class_latitude,longitude,class_radius) VALUES (?,?,?,?,?,?,?,?)";
+     const sql = "INSERT INTO attendance_sessions (assignment_id,date,qr_token,start_time,expiry_time,class_latitude,longitude,class_radius) VALUES (?,?,?,?,?,?,?,?)";
 
     db.query(sql,
     [

@@ -3,55 +3,58 @@ const QR=require("../model/qrAttendanceModel");
 const getDistance = require("../Config/distance");
 const { v4: uuidv4 } = require("uuid");
 
+
+
 exports.startQRSession = (req, res) => {
 
-    var assignmentid = req.body.assignment_id;
-    var latitude = req.body.class_latitude;
-    var longitude = req.body.longitude;
+    const assignment_id = req.body.assignment_id;
+    const class_latitude = req.body.class_latitude;
+    const longitude = req.body.longitude;
 
-    if(!assignmentid){
+    if (!assignment_id) {
         return res.json({
-            success:false,
-            message:"Assignment ID required"
+            success: false,
+            message: "Assignment ID required"
         });
     }
 
-    var token = "QR_" + Date.now();
+    const token = "QR_" + Date.now();
 
-    var data = {
-        assignment_id: assignmentid,
+    const data = {
+        assignment_id: assignment_id,
         date: new Date(),
         qr_token: token,
         start_time: new Date(),
         expiry_time: new Date(Date.now() + 15000),
-        class_latitude: latitude,
+        class_latitude: class_latitude,
         longitude: longitude,
         class_radius: 50
     };
 
-    QR.startSession(data,(err,result)=>{
+    QR.startSession(data, (err, result) => {
 
-        if(err){
-            console.log(err);
+        if (err) {
+            console.log("DB ERROR:", err);
 
-           return res.json({
-                success:false,
-                message:"Error creating QR session"
+            return res.json({
+                success: false,
+                message: "Error creating session"
             });
-
-        }else{
-
-            res.json({
-                success:true,
-                qr_token: token,
-                session_id: result.insertId
-            });
-
         }
+
+        return res.json({
+            success: true,
+            qr_token: token,
+            session_id: result.insertId
+        });
 
     });
 
 };
+
+
+
+
 
 exports.markAttendance=(req,res)=>{
   const {studentid,token,latitude,longitude} = req.body;
