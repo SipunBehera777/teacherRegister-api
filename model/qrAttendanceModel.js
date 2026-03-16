@@ -1,13 +1,18 @@
 const db = require("../Config/db");
 
-class QRAttendance{
+class QRAttendance {
 
-  static startSession(data,callback){
-     const sql = "INSERT INTO attendance_sessions (assignment_id,date,qr_token,start_time,expiry_time,class_latitude,longitude,class_radius) VALUES (?,?,?,?,?,?,?,?)";
+  static startSession(data, callback) {
+
+    const sql = `
+    INSERT INTO attendance_sessions
+    (assignment_id,date,qr_token,start_time,expiry_time,class_latitude,longitude,class_radius)
+    VALUES (?,?,?,?,?,?,?,?)
+    `;
 
     db.query(sql,
-    [
-        data.assignmentid,
+      [
+        data.assignment_id,
         data.date,
         data.qr_token,
         data.start_time,
@@ -15,47 +20,52 @@ class QRAttendance{
         data.class_latitude,
         data.longitude,
         data.class_radius
-    ],
-    callback);
-
-
-   db.query(sql,[assignment_id,token,expiry],callback);
+      ],
+      callback
+    );
   }
 
-  static getSessionByToken(token,callback){
-    db.query(
-   "SELECT * FROM attendance_sessions WHERE qr_token=?",
-   [token],
-   callback
-   );
 
+  static getSessionByToken(token, callback) {
 
+    const sql = "SELECT * FROM attendance_sessions WHERE qr_token=?";
 
+    db.query(sql, [token], callback);
   }
 
-  static markAttendance(attendance_id,student_id,lat,lng,callback){
 
-     const sql = "INSERT INTO attendance_details (attendance_id,status,student_id,marked_time,latitude,longitude) VALUES (?,?,?,?,?,?)";
+  static markAttendance(data, callback) {
+
+    const sql = `
+    INSERT INTO attendance_details
+    (attendance_id,status,student_id,marked_time,latitude,longitude)
+    VALUES (?,?,?,?,?,?)
+    `;
 
     db.query(sql,
-    [
-        data.attendanceid,
+      [
+        data.attendance_id,
         data.status,
-        data.studentid,
+        data.student_id,
         data.marked_time,
         data.latitude,
         data.longitude
-    ],
-    callback);
+      ],
+      callback
+    );
   }
 
-  static checkAlreadyMarked(studentid,attendanceid,callback){
 
-    const sql = "SELECT * FROM attendancedetails WHERE student_id=? AND attendance_id=?";
+  static checkAlreadyMarked(student_id, attendance_id, callback) {
 
-    db.query(sql,[studentid,attendanceid],callback);
+    const sql = `
+    SELECT * FROM attendance_details
+    WHERE student_id=? AND attendance_id=?
+    `;
 
+    db.query(sql, [student_id, attendance_id], callback);
   }
 
-};
-module.exports=QRAttendance;
+}
+
+module.exports = QRAttendance;
