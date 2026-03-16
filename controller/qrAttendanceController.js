@@ -1,126 +1,153 @@
 const QR = require("../model/qrAttendanceModel");
 const getDistance = require("../Config/distance");
+const moment = require("moment-timezone");
+const { v4: uuidv4 } = require("uuid");
 
 
-
+// ==============================
+// START QR SESSION
+// ==============================
 exports.startQRSession = (req, res) => {
 
- const { assignment_id, class_latitude, longitude } = req.body;
+    const { assignment_id, class_latitude, longitude } = req.body;
 
- QR.checkTodaySession(assignment_id,(err,result)=>{
+    if (!assignment_id) {
+        return res.json({
+            success: false,
+            message: "Assignment ID required"
+        });
+    }
 
-  if(result.length > 0){
-   return res.json({
-    success:false,
-    message:"Attendance already started today"
-   });
-  }
+    // India timezone
+    const today = moment().tz("Asia/Kolkata").format("YYYY-MM-DD");
+    const now = moment().tz("Asia/Kolkata").format("YYYY-MM-DD HH:mm:ss");
+    const expiry = moment().tz("Asia/Kolkata").add(15, "seconds").format("YYYY-MM-DD HH:mm:ss");
 
-  const token = "QR_" + Date.now();
+    const token = "QR_" + Date.now();
 
-  const data = {
-   assignment_id: assignment_id,
-   date: new Date(),
-   qr_token: token,
-   start_time: new Date(),
-   expiry_time: new Date(Date.now() + 15000),
-   class_latitude: class_latitude,
-   longitude: longitude,
-   class_radius: 50
-  };
+    // Check if session already started today
+    QR.checkTodaySession(assignment_id, today, (err, result) => {
 
-  QR.startSession(data,(err,result)=>{
+        if (err) {
+            console.log(err);
+            return res.json({ success: false, message: "DB Error" });
+        }
 
-   if(err){
-    return res.json({success:false,message:"Error creating session"});
-   }
+        if (result.length > 0) {
+            return res.json({
+                success: false,
+                message: "Attendance already started today"
+            });
+        }
 
-   res.json({
-    success:true,
-    qr_token: token,
-    session_id: result.insertId
-   });
+        const data = {
+            assignment_id,
+            date: today,
+            qr_token: token,
+            start_time: now,
+            expiry_time: expiry,
+            class_latitude,
+            longitude,
+            class_radius: 50
+        };
 
-  });
+        QR.startSession(data, (err, result) => {
 
- });
+            if (err) {
+                console.log(err);
+                return res.json({
+                    success: false,
+                    message: "Error creating session"
+                });
+            }
+
+            return res.json({
+                success: true,
+                qr_token: token,
+                session_id: result.insertId
+            });
+
+        });
+
+    });
 
 };
 
 
-
+// ==============================
+// MARK ATTENDANCE
+// ==============================
 exports.markAttendance = (req, res) => {
 
-  const { studentid, token, latitude, longitude } = req.body;
+    const { studentid, token, latitude, longitude } = req.body;
 
-  QR.getSessionByToken(token, (err, result) => {
+    QR.getSessionByToken(token, (err, session) => {
 
-    if (err || result.length == 0) {
-      return res.json({
-        success: false,
-        message: "Invalid QR"
-      });
-    }
-
-    const session = result[0];
-
-    if (new Date() > new Date(session.expiry_time)) {
-      return res.json({
-        success: false,
-        message: "QR Expired"
-      });
-    }
-
-    const distance = getDistance(
-      latitude,
-      longitude,
-      session.class_latitude,
-      session.longitude
-    );
-
-    if (distance > session.class_radius) {
-      return res.json({
-        success: false,
-        message: "Not in classroom"
-      });
-    }
-
-    QR.checkAlreadyMarked(studentid, session.id, (err, result) => {
-
-      if (result.length > 0) {
-        return res.json({
-          success: false,
-          message: "Attendance already marked"
-        });
-      }
-
-      const data = {
-        attendance_id: session.id,
-        status: "present",
-        student_id: studentid,
-        marked_time: new Date(),
-        latitude: latitude,
-        longitude: longitude
-      };
-
-      QR.markAttendance(data, (err, result) => {
-
-        if (err) {
-          return res.json({
-            success: false,
-            message: "Error marking attendance"
-          });
+        if (err || session.length === 0) {
+            return res.json({
+                success: false,
+                message: "Invalid QR"
+            });
         }
 
-        res.json({
-          success: true,
-          message: "Attendance marked"
+        const s = session[0];
+
+        // Check expiry
+        if (new Date() > new Date(s.expiry_time)) {
+            return res.json({
+                success: false,
+                message: "QR Expired"
+            });
+        }
+
+        // Check classroom distance
+        const distance = getDistance(latitude, longitude, s.class_latitude, s.longitude);
+
+        if (distance > s.class_radius) {
+            return res.json({
+                success: false,
+                message: "Not in classroom"
+            });
+        }
+
+        // Check already marked
+        QR.checkAlreadyMarked(studentid, s.id, (err, result) => {
+
+            if (result.length > 0) {
+                return res.json({
+                    success: false,
+                    message: "Attendance already marked"
+                });
+            }
+
+            const data = {
+                attendanceid: s.id,
+                status: "present",
+                studentid: studentid,
+                marked_time: moment().tz("Asia/Kolkata").format("YYYY-MM-DD HH:mm:ss"),
+                latitude,
+                longitude
+            };
+
+            QR.markAttendance(data, (err, result) => {
+
+                if (err) {
+                    console.log(err);
+                    return res.json({
+                        success: false,
+                        message: "Error marking attendance"
+                    });
+                }
+
+                return res.json({
+                    success: true,
+                    message: "Attendance marked"
+                });
+
+            });
+
         });
 
-      });
-
     });
-
-  });
 
 };
