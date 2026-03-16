@@ -15,7 +15,7 @@ router.post(
  qrController.markAttendance
 );
 
-router.get("/session/:session_id/qr", qrController.getTemporaryQR); // get QR token every 15 sec
+
 
 
 module.exports = router;

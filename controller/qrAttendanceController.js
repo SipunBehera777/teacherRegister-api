@@ -14,47 +14,44 @@ exports.startQRSession = (req, res) => {
 
     const today = moment().tz("Asia/Kolkata").format("YYYY-MM-DD");
     const now = moment().tz("Asia/Kolkata").format("YYYY-MM-DD HH:mm:ss");
+    // Set expiry slightly longer than the refresh rate (e.g., 20s) to avoid race conditions
+    const expiry = moment().tz("Asia/Kolkata").add(20, "seconds").format("YYYY-MM-DD HH:mm:ss");
+    
+    // Create a truly unique token using UUID or Timestamp
+    const token = "QR_" + uuidv4().substring(0, 8) + "_" + Date.now();
 
-    // Check if session already exists today
+    // Check if session exists for today
     QR.checkTodaySession(assignment_id, today, (err, result) => {
         if (err) return res.json({ success: false, message: "DB Error" });
 
         if (result.length > 0) {
-            // Return existing session_id
-            return res.json({ success: true, message: "Session exists", session_id: result[0].id });
+            // UPDATE existing session with NEW token and expiry
+            const sessionId = result[0].id;
+            const updateData = [token, now, expiry, sessionId];
+            
+            // Assuming you add an updateToken method in your model
+            QR.getSessionByToken(updateData, (updateErr, updateResult) => {
+                if (updateErr) return res.json({ success: false, message: "Update Error" });
+                return res.json({ success: true, qr_token: token, session_id: sessionId });
+            });
+        } else {
+            // INSERT new session
+            const data = {
+                assignment_id,
+                date: today,
+                qr_token: token,
+                start_time: now,
+                expiry_time: expiry,
+                class_latitude,
+                longitude,
+                class_radius: 50
+            };
+
+            QR.startSession(data, (err, insertResult) => {
+                if (err) return res.json({ success: false, message: "Insert Error" });
+                return res.json({ success: true, qr_token: token, session_id: insertResult.insertId });
+            });
         }
-
-        // Create new session
-        const data = {
-            assignment_id,
-            date: today,
-            start_time: now,
-            class_latitude,
-            longitude,
-            class_radius: 50
-        };
-
-        QR.startSession(data, (err, result) => {
-            if (err) return res.json({ success: false, message: "Error creating session" });
-            return res.json({ success: true, session_id: result.insertId });
-        });
-    });
-};
-
-// ==============================
-// GET TEMPORARY QR TOKEN (every 15 sec)
-// ==============================
-exports.getTemporaryQR = (req, res) => {
-    const { session_id } = req.params;
-
-    if (!session_id) return res.json({ success: false, message: "Session ID required" });
-
-    const token = "QR_" + Date.now();
-    const expiry = moment().tz("Asia/Kolkata").add(15, "seconds").format("YYYY-MM-DD HH:mm:ss");
-
-    QR.updateSessionToken(session_id, token, expiry, (err, result) => {
-        if (err) return res.json({ success: false, message: "DB Error" });
-        return res.json({ success: true, qr_token: token, expiry_time: expiry });
     });
 };
  
