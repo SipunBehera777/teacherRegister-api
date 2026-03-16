@@ -34,7 +34,7 @@ exports.startQRSession = (req, res) => {
         if(err){
             console.log(err);
 
-            res.json({
+           return res.json({
                 success:false,
                 message:"Error creating QR session"
             });
@@ -92,8 +92,8 @@ if(err || session.length==0){
 
            QR.markAttendance(data,(err,result)=>{
 
- if(err){
-                    res.json({success:false,message:"Error marking attendance"});
+                if(err){
+                 return   res.json({success:false,message:"Error marking attendance"});
                 }else{
                     res.json({success:true,message:"Attendance marked"});
                 }
