@@ -30,7 +30,7 @@ exports.startQRSession = (req, res) => {
             const updateData = [token, now, expiry, sessionId];
             
             // Assuming you add an updateToken method in your model
-            QR.getSessionByToken(updateData, (updateErr, updateResult) => {
+            QR.updateSessionToken(updateData, (updateErr, updateResult) => {
                 if (updateErr) return res.json({ success: false, message: "Update Error" });
                 return res.json({ success: true, qr_token: token, session_id: sessionId });
             });
