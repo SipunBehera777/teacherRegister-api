@@ -1,7 +1,7 @@
  const QR = require("../model/qrAttendanceModel");
 const getDistance = require("../Config/distance");
 const moment = require("moment-timezone");
-
+const { v4: uuidv4 } = require("uuid");
 // ==============================
 // START DAILY QR SESSION (once per day)
 // ==============================
