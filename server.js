@@ -45,7 +45,7 @@ app.use("/api/batches", require("./Router/batchRoutes"));
 app.use("/api/sections", require("./Router/sectionRoutes"));
 app.use("/api/groups", require("./Router/groupRoutes"));
 app.use("/api/subjects", require("./Router/subjectRoutes"));
-app.use("/api/attendance",qrRoutes);
+app.use("/api/Qr_attendance",qrRoutes);
 
 const PORT = 3306;
 

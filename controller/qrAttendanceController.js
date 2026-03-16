@@ -3,35 +3,55 @@ const QR=require("../model/qrAttendanceModel");
 const getDistance = require("../Config/distance");
 const { v4: uuidv4 } = require("uuid");
 
-exports.startQRSession=(req,res)=>{
-   
- var token = "QR_" + Date.now();
+exports.startQRSession = (req, res) => {
+
+    var assignmentid = req.body.assignmentid;
+    var latitude = req.body.latitude;
+    var longitude = req.body.longitude;
+
+    if(!assignmentid){
+        return res.json({
+            success:false,
+            message:"Assignment ID required"
+        });
+    }
+
+    var token = "QR_" + Date.now();
 
     var data = {
-        assignmentid: req.body.assignmentid,
+        assignmentid: assignmentid,
         date: new Date(),
         qr_token: token,
         start_time: new Date(),
-        expiry_time: new Date(Date.now()+15000),
-        latitude: req.body.latitude,
-        longitude: req.body.longitude,
+        expiry_time: new Date(Date.now() + 15000),
+        latitude: latitude,
+        longitude: longitude,
         radius: 50
     };
 
     QR.startSession(data,(err,result)=>{
 
-       if(err){
-            res.json({success:false,message:"Error creating session"});
+        if(err){
+            console.log(err);
+
+            res.json({
+                success:false,
+                message:"Error creating QR session"
+            });
+
         }else{
+
             res.json({
                 success:true,
-                qr_token: token
+                qr_token: token,
+                session_id: result.insertId
             });
+
         }
 
-    })
- 
-}
+    });
+
+};
 
 exports.markAttendance=(req,res)=>{
   const {studentid,token,latitude,longitude} = req.body;
