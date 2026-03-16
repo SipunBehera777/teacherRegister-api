@@ -66,6 +66,17 @@ class QRAttendance {
     db.query(sql, [student_id, attendance_id], callback);
   }
 
+  static checkTodaySession(assignment_id,callback){
+
+ const sql = `
+ SELECT * FROM attendance_sessions
+ WHERE assignment_id=? AND DATE(date)=CURDATE()
+ `;
+
+ db.query(sql,[assignment_id],callback);
+
+}
+
 }
 
 module.exports = QRAttendance;

@@ -5,45 +5,45 @@ const getDistance = require("../Config/distance");
 
 exports.startQRSession = (req, res) => {
 
-  const { assignment_id, class_latitude, longitude } = req.body;
+ const { assignment_id, class_latitude, longitude } = req.body;
 
-  if (!assignment_id) {
-    return res.json({
-      success: false,
-      message: "Assignment ID required"
-    });
+ QR.checkTodaySession(assignment_id,(err,result)=>{
+
+  if(result.length > 0){
+   return res.json({
+    success:false,
+    message:"Attendance already started today"
+   });
   }
 
   const token = "QR_" + Date.now();
 
   const data = {
-    assignment_id: assignment_id,
-    date: new Date(),
-    qr_token: token,
-    start_time: new Date(),
-    expiry_time: new Date(Date.now() + 15000),
-    class_latitude: class_latitude,
-    longitude: longitude,
-    class_radius: 50
+   assignment_id: assignment_id,
+   date: new Date(),
+   qr_token: token,
+   start_time: new Date(),
+   expiry_time: new Date(Date.now() + 15000),
+   class_latitude: class_latitude,
+   longitude: longitude,
+   class_radius: 50
   };
 
-  QR.startSession(data, (err, result) => {
+  QR.startSession(data,(err,result)=>{
 
-    if (err) {
-      console.log(err);
-      return res.json({
-        success: false,
-        message: "Error creating session"
-      });
-    }
+   if(err){
+    return res.json({success:false,message:"Error creating session"});
+   }
 
-    res.json({
-      success: true,
-      qr_token: token,
-      session_id: result.insertId
-    });
+   res.json({
+    success:true,
+    qr_token: token,
+    session_id: result.insertId
+   });
 
   });
+
+ });
 
 };
 
