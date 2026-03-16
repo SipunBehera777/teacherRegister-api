@@ -73,6 +73,11 @@ class QRAttendance {
 
     }
 
+    static updateSessionToken(session_id, token, expiry, callback) {
+    const sql = "UPDATE attendance_sessions SET qr_token=?, expiry_time=? WHERE id=?";
+    db.query(sql, [token, expiry, session_id], callback);
+};
+
 }
 
 module.exports = QRAttendance;
