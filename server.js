@@ -27,6 +27,7 @@ const authRoutes = require("./Router/authRoutes");
 
 const qrRoutes =
 require("./Router/qrAttendanceRouts");
+const materialRoutes = require("./Router/studyMaterialRoutes");
 
 
 
@@ -37,6 +38,7 @@ app.use("/uploads", express.static("uploads"));
 
 app.use("/api/assignments", assignmentRoutes);
 app.use("/api/attendance", attendanceRoutes);
+app.use("/api/materials", materialRoutes);
 
 app.use("/api/colleges", require("./Router/collegeRoutes"));
 app.use("/api/departments", require("./Router/departmentRoutes"));
