@@ -2,9 +2,9 @@
 const getDistance = require("../Config/distance");
 const moment = require("moment-timezone");
 const { v4: uuidv4 } = require("uuid");
-// ==============================
-// START DAILY QR SESSION (once per day)
-// ==============================
+
+
+
 exports.startQRSession = (req, res) => {
     const { assignment_id, class_latitude, longitude } = req.body;
 
@@ -32,7 +32,9 @@ exports.startQRSession = (req, res) => {
             // Assuming you add an updateToken method in your model
             QR.updateSessionToken(updateData, (updateErr, updateResult) => {
                 if (updateErr) return res.json({ success: false, message: "Update Error" });
-                return res.json({ success: true, qr_token: token, session_id: sessionId });
+                return res.json({ success: true, qr_token: token, session_id: sessionId ,
+                    expiry_time: expiry
+                });
             });
         } else {
             // INSERT new session
@@ -49,7 +51,9 @@ exports.startQRSession = (req, res) => {
 
             QR.startSession(data, (err, insertResult) => {
                 if (err) return res.json({ success: false, message: "Insert Error" });
-                return res.json({ success: true, qr_token: token, session_id: insertResult.insertId });
+                return res.json({ success: true, qr_token: token, session_id: insertResult.insertId,
+                    expiry_time: expiry
+                 });
             });
         }
     });
