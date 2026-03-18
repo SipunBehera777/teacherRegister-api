@@ -1,11 +1,7 @@
 const Material = require("../model/studyMaterialModel");
 const cloudinary = require("../Config/cloudinary");
 
-
-
-
 exports.uploadMaterial = (req, res) => {
-    // Check if file exists
     if (!req.file) return res.status(400).json({ success: false, message: "File required" });
 
     const {
@@ -13,10 +9,10 @@ exports.uploadMaterial = (req, res) => {
         batch_id, section_id, semester_id, subject_id
     } = req.body;
 
-    // 1. Authorization Check
+    // 1. Authorization Check (Verify teacher is assigned to this section/subject)
     Material.checkAssignment(teacher_id, subject_id, section_id, batch_id, (err, assignments) => {
-        if (err || assignments.length === 0) {
-            // Clean up Cloudinary if unauthorized
+        if (err || !assignments || assignments.length === 0) {
+            // Delete from Cloudinary if check fails to save space
             cloudinary.uploader.destroy(req.file.filename, { resource_type: req.file.resource_type });
             
             return res.status(403).json({ 
@@ -25,16 +21,16 @@ exports.uploadMaterial = (req, res) => {
             });
         }
 
-        // 2. Data for DB (Using req.file properties)
+        // 2. Prepare Data for MySQL
         const data = {
             title,
             file_url: req.file.path,
             public_id: req.file.filename, 
-            resource_type: req.file.resource_type, // "image" or "raw"
+            resource_type: req.file.resource_type, 
             teacher_id, college_id, department_id, batch_id, section_id, semester_id, subject_id
         };
 
-        // 3. Save to Database
+        // 3. Save Metadata to Database
         Material.addMaterial(data, (dbErr) => {
             if (dbErr) {
                 cloudinary.uploader.destroy(req.file.filename, { resource_type: req.file.resource_type });
@@ -45,32 +41,33 @@ exports.uploadMaterial = (req, res) => {
     });
 };
 
-// ... deleteMaterial and getMaterials remain the same as previous correct version
 exports.deleteMaterial = (req, res) => {
-  const { id } = req.params;
+    const { id } = req.params;
 
-  Material.getById(id, async (err, result) => {
-    if (err || result.length === 0) return res.json({ success: false, message: "File not found" });
+    Material.getById(id, async (err, result) => {
+        if (err || !result || result.length === 0) {
+            return res.status(404).json({ success: false, message: "File not found" });
+        }
 
-    const file = result[0];
+        const file = result[0];
 
-    try {
-      // Use the stored resource_type for Cloudinary deletion
-      await cloudinary.uploader.destroy(file.public_id, { resource_type: file.resource_type });
+        try {
+            // Always use the stored resource_type (raw or image)
+            await cloudinary.uploader.destroy(file.public_id, { resource_type: file.resource_type });
 
-      Material.deleteMaterial(id, (dbErr) => {
-        if (dbErr) return res.json({ success: false, message: "Failed to delete from DB" });
-        res.json({ success: true, message: "Deleted successfully" });
-      });
-    } catch (e) {
-      res.json({ success: false, message: "Cloudinary error" });
-    }
-  });
+            Material.deleteMaterial(id, (dbErr) => {
+                if (dbErr) return res.status(500).json({ success: false, message: "Failed to delete from DB" });
+                res.json({ success: true, message: "Deleted successfully" });
+            });
+        } catch (e) {
+            res.status(500).json({ success: false, message: "Cloudinary error" });
+        }
+    });
 };
 
 exports.getMaterials = (req, res) => {
-  Material.getMaterials(req.query, (err, result) => {
-    if (err) return res.json({ success: false });
-    res.json({ success: true, data: result });
-  });
+    Material.getMaterials(req.query, (err, result) => {
+        if (err) return res.status(500).json({ success: false, message: "Error fetching materials" });
+        res.json({ success: true, data: result });
+    });
 };
