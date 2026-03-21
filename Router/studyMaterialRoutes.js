@@ -8,7 +8,7 @@ const upload = require("../Config/uploadPdf");
 // upload file
 router.post(
   "/upload",
-  upload.single("file"),
+  upload.single("file_url"),
   controller.uploadMaterial
 );
 
