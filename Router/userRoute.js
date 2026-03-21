@@ -6,7 +6,7 @@ const { verifyToken, allowRoles } = require("../model/authMiddleware");
 
 // Admin → Add student
 router.post(
-    "/add-student",
+    "/studentRole",
     verifyToken,
     allowRoles("admin"),
     userController.addStudent
