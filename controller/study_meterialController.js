@@ -13,7 +13,7 @@ exports.uploadMaterial = (req, res) => {
     Material.checkAssignment(teacher_id, subject_id, section_id, batch_id, (err, assignments) => {
         if (err || !assignments || assignments.length === 0) {
             // Delete from Cloudinary if check fails to save space
-            cloudinary.uploader.destroy(req.file.filename, { resource_type: req.file.resource_type });
+            cloudinary.uploader.destroy(req.file.filename);
             
             return res.status(403).json({ 
                 success: false, 
@@ -26,14 +26,14 @@ exports.uploadMaterial = (req, res) => {
             title,
             file_url: req.file.path,
             public_id: req.file.filename, 
-            resource_type: req.file.resource_type, 
+            
             teacher_id, college_id, department_id, batch_id, section_id, semester_id, subject_id
         };
 
         // 3. Save Metadata to Database
         Material.addMaterial(data, (dbErr) => {
             if (dbErr) {
-                cloudinary.uploader.destroy(req.file.filename, { resource_type: req.file.resource_type });
+                cloudinary.uploader.destroy(req.file.filename, );
                 return res.status(500).json({ success: false, message: "Database Save Error" });
             }
             res.json({ success: true, message: "Material uploaded successfully" });

@@ -3,11 +3,11 @@ const db = require("../Config/db");
 class StudyMaterial {
   static addMaterial(data, callback) {
     const sql = `INSERT INTO study_materials 
-      (title, file_url, public_id, resource_type, teacher_id, college_id, department_id, batch_id, section_id, semester_id, subject_id) 
-      VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`;
+      (title, file_url, public_id, teacher_id, college_id, department_id, batch_id, section_id, semester_id, subject_id) 
+      VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`;
 
     db.query(sql, [
-      data.title, data.file_url, data.public_id, data.resource_type,
+      data.title, data.file_url, data.public_id,
       data.teacher_id, data.college_id, data.department_id,
       data.batch_id, data.section_id, data.semester_id, data.subject_id
     ], callback);
