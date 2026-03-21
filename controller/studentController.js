@@ -14,7 +14,7 @@ exports.registerStudent = (req, res) => {
     sem,
     section,
     group,
-    password,
+    firebase_uid
   } = req.body;
 
   // Cloudinary image URL
@@ -22,18 +22,6 @@ exports.registerStudent = (req, res) => {
 
    try {
 
-    
-    const userRecord = admin.auth().createUser({
-      email,
-      password: password
-    });
-
-    const uid = userRecord.uid;
-
-    
-     admin.auth().setCustomUserClaims(uid, {
-      role: "student"
-    });
 
     
     const studentData = {
@@ -49,7 +37,7 @@ exports.registerStudent = (req, res) => {
       section,
       group,
       image,
-      firebase_uid: uid
+      firebase_uid
     };
 
     Students.register(studentData, (err, result) => {
@@ -64,7 +52,7 @@ exports.registerStudent = (req, res) => {
       res.status(201).json({
         success: true,
         message: "Student Created Successfully",
-        uid: uid
+        uid:firebase_uid
       });
 
     });
@@ -82,7 +70,20 @@ exports.registerStudent = (req, res) => {
 
 
 
+exports.getStudentByUid=(req,res)=>{
+   const {uid} = req.body;
 
+   Students.getStudentByUid(uid,(err,result)=>{
+     if(err){
+            return res.status(500).json(err);
+        }
+
+        res.json({
+            success:true,
+            data: result[0]
+        });
+   })
+}
 
 
 exports.getAllStudent=(req,res)=>{

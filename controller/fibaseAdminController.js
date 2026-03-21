@@ -15,6 +15,7 @@ exports.firebaseLogin = async (req, res) => {
             "SELECT * FROM teacher WHERE firebase_uid = ?",
             [uid]
         );
+        
 
         if (rows.length === 0) {
             return res.status(404).json({
@@ -45,3 +46,51 @@ exports.firebaseLogin = async (req, res) => {
     }
 
 };
+
+exports.studentFirebaseLogin = async (req, res) => {
+
+    try {
+
+        const { token } = req.body;
+
+        const decodedToken = await admin.auth().verifyIdToken(token);
+
+        const uid = decodedToken.uid;
+
+        const [rows] = await db.promise().query(
+            "SELECT * FROM students WHERE firebase_uid = ?",
+            [uid]
+        );
+        
+
+        if (rows.length === 0) {
+            return res.status(404).json({
+                success: false,
+                message: "Student not found"
+            });
+        }
+
+        const student= rows[0];
+
+        return res.json({
+            success: true,
+            id:id,
+            fullname: student.fullname,
+            email: student.email,
+           
+
+            collegeID: teacher.collegeID
+        });
+
+    } catch (error) {
+
+        console.error("VERIFY ERROR:", error);
+
+        return res.status(401).json({
+            success: false,
+            message: error.message
+        });
+    }
+
+};
+

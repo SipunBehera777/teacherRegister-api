@@ -4,9 +4,8 @@ const bcrypt = require("bcrypt");
 
 class Students{
   static register(data,callback){
-     bcrypt.hash(data.password, 10, (err, hashedPassword) => {
-        if (err) return callback(err);
-    const query='INSERT INTO students(collegeID,fullname, rollno, regd_no, mobileno, email, batch, department, sem, section, \`group\`, password, image,firebase_uid)      VALUES (?,?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?,?)';
+     
+    const query='INSERT INTO students(collegeID,fullname, rollno, regd_no, mobileno, email, batch, department, sem, section, \`group\`, image,firebase_uid)      VALUES (?,?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?,?)';
 
     db.query(query,
        [
@@ -21,14 +20,14 @@ class Students{
         data.sem,
         data.section,
         data.group,
-        hashedPassword,
+       
         data.image,
         data.firebase_uid
         
       ],
       callback
     );
-     });
+     
 
   }
 
@@ -125,7 +124,12 @@ class Students{
 
 
 
+static getStudentByUid(uid,callback){
 
+   const sql = "SELECT * FROM students WHERE firebase_uid=?";
+   db.query(sql, [uid], callback);
+
+}
 
 
 
