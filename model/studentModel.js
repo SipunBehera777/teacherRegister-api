@@ -6,7 +6,7 @@ class Students{
   static register(data,callback){
      bcrypt.hash(data.password, 10, (err, hashedPassword) => {
         if (err) return callback(err);
-    const query='INSERT INTO students(collegeID,fullname, rollno, regd_no, mobileno, email, batch, department, sem, section, \`group\`, password, image)      VALUES (?,?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)';
+    const query='INSERT INTO students(collegeID,fullname, rollno, regd_no, mobileno, email, batch, department, sem, section, \`group\`, password, image,firebase_uid)      VALUES (?,?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?,?)';
 
     db.query(query,
        [
@@ -22,7 +22,8 @@ class Students{
         data.section,
         data.group,
         hashedPassword,
-        data.image
+        data.image,
+        data.firebase_uid
         
       ],
       callback

@@ -1,5 +1,5 @@
 const Students = require("../model/studentModel");
-
+const admin = require("../firebaseAdmin");
 exports.registerStudent = (req, res) => {
 
   const {
@@ -20,41 +20,69 @@ exports.registerStudent = (req, res) => {
   // Cloudinary image URL
   const image = req.file ? req.file.path : null;
 
-  const studentData = {
-    collegeID,
-    fullname,
-    rollno,
-    regd_no,
-    mobileno,
-    email,
-    batch,
-    department,
-    sem,
-    section,
-    group,
-    password,
-    image
-  };
+   try {
 
-  Students.register(studentData, (err, result) => {
-
-    if (err) {
-      console.error("Register Student Error:", err);
-      return res.status(500).json({
-        success: false,
-        error: err.sqlMessage || err.message
-      });
-    }
-
-    res.status(201).json({
-      success: true,
-      message: "Student Added Successfully",
-      studentID: result.insertId,
-      imageUrl: image
+    
+    const userRecord = admin.auth().createUser({
+      email,
+      password: password
     });
 
-  });
+    const uid = userRecord.uid;
+
+    
+     admin.auth().setCustomUserClaims(uid, {
+      role: "student"
+    });
+
+    
+    const studentData = {
+      collegeID,
+      fullname,
+      rollno,
+      regd_no,
+      mobileno,
+      email,
+      batch,
+      department,
+      sem,
+      section,
+      group,
+      image,
+      firebase_uid: uid
+    };
+
+    Students.register(studentData, (err, result) => {
+
+      if (err) {
+        return res.status(500).json({
+          success: false,
+          error: err.message
+        });
+      }
+
+      res.status(201).json({
+        success: true,
+        message: "Student Created Successfully",
+        uid: uid
+      });
+
+    });
+
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      message: error.message
+    });
+  }
 };
+
+
+
+
+
+
+
 
 
 exports.getAllStudent=(req,res)=>{

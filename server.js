@@ -28,7 +28,7 @@ const authRoutes = require("./Router/authRoutes");
 const qrRoutes =
 require("./Router/qrAttendanceRouts");
 const materialRoutes = require("./Router/studyMaterialRoutes");
-const userRoutes = require("./Router/userRoute");
+
 
 
 
@@ -49,7 +49,7 @@ app.use("/api/sections", require("./Router/sectionRoutes"));
 app.use("/api/groups", require("./Router/groupRoutes"));
 app.use("/api/subjects", require("./Router/subjectRoutes"));
 app.use("/api/Qr_attendance",qrRoutes);
-app.use("/api/users", userRoutes);
+
 
 const PORT = 3306;
 

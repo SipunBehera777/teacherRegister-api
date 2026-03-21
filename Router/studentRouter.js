@@ -1,11 +1,17 @@
 const express = require("express");
 const upload = require("../Config/multerCloudinary"); // make sure folder name matches
+
 const studentrouter = express.Router();
 const studentController = require("../controller/studentController");
 
 // Postman / Android form-data key
+const { verifyToken, allowRoles } = require("../model/authMiddleware");
+
+
 studentrouter.post(
   "/register",
+  verifyToken,
+   allowRoles("admin"),
   upload.single("image"),
   studentController.registerStudent
 );
