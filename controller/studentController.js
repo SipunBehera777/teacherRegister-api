@@ -9,11 +9,12 @@ exports.registerStudent = (req, res) => {
     regd_no,
     mobileno,
     email,
-    batch,
-    department,
-    sem,
-    section,
-    group,
+    batch_id,
+    dept_id,
+    sem_id,
+    section_id,
+    group_id,
+    
     firebase_uid
   } = req.body;
 
@@ -31,11 +32,11 @@ exports.registerStudent = (req, res) => {
       regd_no,
       mobileno,
       email,
-      batch,
-      department,
-      sem,
-      section,
-      group,
+      batch_id,
+      dept_id,
+      sem_id,
+      section_id,
+      group_id,
       image,
       firebase_uid
     };

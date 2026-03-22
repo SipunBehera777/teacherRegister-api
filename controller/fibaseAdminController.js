@@ -32,7 +32,8 @@ exports.firebaseLogin = async (req, res) => {
             teacher_name: teacher.teacher_name,
             email: teacher.email,
             dept_id: teacher.dept_id,
-            college_id: teacher.college_id
+            college_id: teacher.college_id,
+             role: "teacher",
         });
 
     } catch (error) {
@@ -72,15 +73,14 @@ exports.studentFirebaseLogin = async (req, res) => {
 
         const student= rows[0];
 
-        return res.json({
-            success: true,
-            id:id,
-            fullname: student.fullname,
-            email: student.email,
-           
-
-            collegeID: teacher.collegeID
-        });
+      return res.json({
+    success: true,
+    id: student.id,
+    fullname: student.fullname,
+    email: student.email,
+    collegeID: student.collegeID,
+     role: "student",
+});
 
     } catch (error) {
 

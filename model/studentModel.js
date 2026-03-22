@@ -5,7 +5,7 @@ const bcrypt = require("bcrypt");
 class Students{
   static register(data,callback){
      
-    const query='INSERT INTO students(collegeID,fullname, rollno, regd_no, mobileno, email, batch, department, sem, section, \`group\`, image,firebase_uid)      VALUES (?,?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?,?)';
+    const query='INSERT INTO students(collegeID,fullname, rollno, regd_no, mobileno, email, batch_id, dept_id, sem_id, section_id, group_id, image,firebase_uid)      VALUES (?,?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)';
 
     db.query(query,
        [
@@ -15,11 +15,11 @@ class Students{
         data.regd_no,
         data.mobileno,
         data.email,
-        data.batch,
-        data.department,
-        data.sem,
-        data.section,
-        data.group,
+        data.batch_id,
+        data.dept_id,
+        data.sem_id,
+        data.section_id,
+        data.group_id,
        
         data.image,
         data.firebase_uid
