@@ -2,95 +2,61 @@ const admin = require("../firebaseAdmin");
 const db = require("../Config/db");
 
 exports.firebaseLogin = async (req, res) => {
-
     try {
-
         const { token } = req.body;
 
-        const decodedToken = await admin.auth().verifyIdToken(token);
-
-        const uid = decodedToken.uid;
-
-        const [rows] = await db.promise().query(
-            "SELECT * FROM teacher WHERE firebase_uid = ?",
-            [uid]
-        );
-        
-
-        if (rows.length === 0) {
-            return res.status(404).json({
+        if (!token) {
+            return res.status(400).json({
                 success: false,
-                message: "Teacher not found"
+                message: "Token is required"
             });
         }
 
-        const teacher = rows[0];
+        const uid = await verifyFirebaseToken(token);
 
-        return res.json({
-            success: true,
-            teacher_id: teacher.teacher_id,
-            teacher_name: teacher.teacher_name,
-            email: teacher.email,
-            dept_id: teacher.dept_id,
-            college_id: teacher.college_id,
-             role: "teacher",
+        // Check Teacher
+        const [teacherRows] = await db.promise().query(
+            "SELECT teacher_id, teacher_name, email, dept_id, college_id FROM teacher WHERE firebase_uid = ?",
+            [uid]
+        );
+
+        if (teacherRows.length > 0) {
+            const teacher = teacherRows[0];
+
+            return res.json({
+                success: true,
+                role: "teacher",
+                data: teacher
+            });
+        }
+
+        // Check Student
+        const [studentRows] = await db.promise().query(
+            "SELECT id, fullname, email, collegeID FROM students WHERE firebase_uid = ?",
+            [uid]
+        );
+
+        if (studentRows.length > 0) {
+            const student = studentRows[0];
+
+            return res.json({
+                success: true,
+                role: "student",
+                data: student
+            });
+        }
+
+        return res.status(404).json({
+            success: false,
+            message: "User not found"
         });
 
     } catch (error) {
-
         console.error("VERIFY ERROR:", error);
 
         return res.status(401).json({
             success: false,
-            message: error.message
+            message: "Invalid or expired token"
         });
     }
-
 };
-
-exports.studentFirebaseLogin = async (req, res) => {
-
-    try {
-
-        const { token } = req.body;
-
-        const decodedToken = await admin.auth().verifyIdToken(token);
-
-        const uid = decodedToken.uid;
-
-        const [rows] = await db.promise().query(
-            "SELECT * FROM students WHERE firebase_uid = ?",
-            [uid]
-        );
-        
-
-        if (rows.length === 0) {
-            return res.status(404).json({
-                success: false,
-                message: "Student not found"
-            });
-        }
-
-        const student= rows[0];
-
-      return res.json({
-    success: true,
-    id: student.id,
-    fullname: student.fullname,
-    email: student.email,
-    collegeID: student.collegeID,
-     role: "student",
-});
-
-    } catch (error) {
-
-        console.error("VERIFY ERROR:", error);
-
-        return res.status(401).json({
-            success: false,
-            message: error.message
-        });
-    }
-
-};
-
