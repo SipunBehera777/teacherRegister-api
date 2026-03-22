@@ -42,31 +42,31 @@ class Students{
   }
 
  
-  static filterStudent(collegeID, batch, department, section, group) {
+  static filterStudent(collegeID, batch_id, dept_id, section_id, group_id) {
 
   return new Promise((resolve, reject) => {
 
     let query = 'SELECT * FROM students WHERE collegeID = ?';
     let params = [collegeID];
 
-    if (batch) {
-      query += ' AND batch = ?';
-      params.push(batch);
+    if (batch_id) {
+      query += ' AND batch_id = ?';
+      params.push(batch_id);
     }
 
-    if (department) {
-      query += ' AND department = ?';
-      params.push(department);
+    if (dept_id) {
+      query += ' AND dept_id = ?';
+      params.push(dept_id);
     }
 
-    if (section) {
-      query += ' AND section = ?';
-      params.push(section);   
+    if (section_id) {
+      query += ' AND section_id = ?';
+      params.push(section_id);
     }
 
-    if (group) {
-      query += ' AND `group` = ?';  
-      params.push(group);
+    if (group_id) {
+      query += ' AND group_id = ?';
+      params.push(group_id);
     }
 
     db.query(query, params, (err, results) => {
@@ -81,31 +81,31 @@ class Students{
 }
 
 
- static filterStudent_Attendance(collegeID, batch, department, section,semester) {
+ static filterStudent_Attendance(collegeID, batch_id, dept_id, section_id,sem_id) {
 
   return new Promise((resolve, reject) => {
 
     let query = 'SELECT * FROM students WHERE collegeID = ?';
     let params = [collegeID];
 
-    if (batch) {
-      query += ' AND batch = ?';
-      params.push(batch);
+    if (batch_id) {
+      query += ' AND batch_id = ?';
+      params.push(batch_id);
     }
 
-    if (department) {
-      query += ' AND department = ?';
+    if (dept_id) {
+      query += ' AND dept_id = ?';
       params.push(department);
     }
 
-    if (section) {
-      query += ' AND section = ?';
-      params.push(section);   
+    if (section_id) {
+      query += ' AND section_id = ?';
+      params.push(section_id);   
     }
 
-    if (semester) {
-      query += ' AND sem = ?';  
-      params.push(semester);
+    if (sem_id) {
+      query += ' AND sem_id = ?';  
+      params.push(sem_id);
     }
 
     db.query(query, params, (err, results) => {

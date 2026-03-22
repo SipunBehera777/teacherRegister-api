@@ -107,7 +107,7 @@ return res.status(200).json({
 
 exports.filterStudent=async (req,res)=>{
   try{
-    const{collegeID,batch,department,section,group}=req.query;
+    const{collegeID,batch_id,dept_id,section_id,group_id}=req.query;
     
         if (!collegeID) {
             return res.status(400).json({
@@ -117,7 +117,7 @@ exports.filterStudent=async (req,res)=>{
         }
 
        const students= await Students.filterStudent
-        (collegeID,batch,department,section,group);
+        (collegeID,batch_id,dept_id,section_id,group_id);
 
          res.status(200).json({
             success: true,
@@ -137,7 +137,7 @@ exports.filterStudent=async (req,res)=>{
 
 exports.filter_student_for_attendance=async (req,res)=>{
   try{
-    const{collegeID,batch,department,section,semester}=req.query;
+    const{collegeID,batch_id,dept_id,section_id,sem_id}=req.query;
     
         if (!collegeID) {
             return res.status(400).json({
@@ -147,7 +147,7 @@ exports.filter_student_for_attendance=async (req,res)=>{
         }
 
        const students= await Students.filterStudent
-        (collegeID,batch,department,section,semester);
+        (collegeID,batch_id,dept_id,section_id,sem_id);
 
          res.status(200).json({
             success: true,
