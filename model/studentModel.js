@@ -170,8 +170,29 @@ static filterStudent_Attendance(collegeID, batch_id, dept_id, section_id, sem_id
 
 static getStudentById(id,callback){
 
-   const sql = "SELECT * FROM students WHERE id=?";
-   db.query(sql, [id], callback);
+  let query = `
+      SELECT 
+        s.id,
+        s.collegeID,
+        s.fullname,
+        s.email,
+        s.rollno,
+        s.mobileno,
+        s.image,
+        d.department_name,
+        sec.section_name,
+        g.group_name,
+        b.batch_name,
+        sem.semester_number
+      FROM students s
+      JOIN departments d ON s.dept_id = d.id
+      JOIN sections sec ON s.section_id = sec.id
+      JOIN groups_table g ON s.group_id = g.id
+      JOIN batches b ON s.batch_id = b.id
+      JOIN semesters sem ON s.sem_id = sem.id
+      WHERE s.collegeID = ?
+    `;
+   db.query(query, [id], callback);
 
 }
 
