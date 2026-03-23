@@ -190,7 +190,7 @@ static getStudentById(id,callback){
       JOIN groups_table g ON s.group_id = g.id
       JOIN batches b ON s.batch_id = b.id
       JOIN semesters sem ON s.sem_id = sem.id
-      WHERE s.collegeID = ?
+      WHERE s.id = ?
     `;
    db.query(query, [id], callback);
 
