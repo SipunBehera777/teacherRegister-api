@@ -207,7 +207,7 @@ static updateStudent(id,data,callback){
  let query = `
 UPDATE students 
 SET fullname=?, rollno=?, regd_no=?, mobileno=?, email=?, 
-batch=?, department=?, sem=?, section=?, \`group\`=?, image=? 
+batch_id=?, dept_id=?, sem_id=?, section_id=?,group_id=?, image=? 
 WHERE id=?`;
 
    db.query(query,
@@ -218,11 +218,11 @@ WHERE id=?`;
         data.regd_no,
         data.mobileno,
         data.email,
-        data.batch,
-        data.department,
-        data.sem,
-        data.section,
-        data.group,
+        data.batch_id,
+        data.dept_id,
+        data.sem_id,
+        data.section_id,
+        data.group_id,
        
         data.image
         ,id
