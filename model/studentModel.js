@@ -225,7 +225,7 @@ WHERE id=?  AND college_id = ?`;
         data.group_id,
        
         data.image
-        ,id,data.collegeID
+        ,id,data.college_id
       ],
       callback
     )
