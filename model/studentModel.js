@@ -179,6 +179,10 @@ static getStudentById(id,callback){
         s.rollno,
         s.mobileno,
         s.image,
+        s.dept_id,
+        s.sem_id,
+        s.section_id,
+        s.batch_id
         d.department_name,
         sec.section_name,
         g.group_name,
