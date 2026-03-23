@@ -146,7 +146,7 @@ exports.filter_student_for_attendance=async (req,res)=>{
             });
         }
 
-       const students= await Students.filterStudent
+       const students= await Students.filterStudent_Attendance
         (collegeID,batch_id,dept_id,section_id,sem_id);
 
          res.status(200).json({
