@@ -177,6 +177,7 @@ static getStudentById(id,callback){
         s.fullname,
         s.email,
         s.rollno,
+        s.regd_no,
         s.mobileno,
         s.image,
         s.dept_id,
