@@ -19,6 +19,9 @@ studentrouter.get("/",studentController.filterStudent);
 
 studentrouter.get("/filter",studentController.filter_student_for_attendance);
 
+studentrouter.get("/getStudent/:id",studentController.getStudentById);
+
+
 studentrouter.delete("/delete/:id",studentController.deleteStudent);
 studentrouter.put(
   "/update/:id",

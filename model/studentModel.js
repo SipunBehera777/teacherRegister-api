@@ -168,10 +168,10 @@ static filterStudent_Attendance(collegeID, batch_id, dept_id, section_id, sem_id
 
 
 
-static getStudentByUid(uid,callback){
+static getStudentById(id,callback){
 
-   const sql = "SELECT * FROM students WHERE firebase_uid=?";
-   db.query(sql, [uid], callback);
+   const sql = "SELECT * FROM students WHERE id=?";
+   db.query(sql, [id], callback);
 
 }
 

@@ -71,10 +71,10 @@ exports.registerStudent = (req, res) => {
 
 
 
-exports.getStudentByUid=(req,res)=>{
-   const {uid} = req.body;
+exports.getStudentById=(req,res)=>{
+    const id=req.params.id;
 
-   Students.getStudentByUid(uid,(err,result)=>{
+   Students.getStudentById(id,(err,result)=>{
      if(err){
             return res.status(500).json(err);
         }
