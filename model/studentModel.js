@@ -42,30 +42,51 @@ class Students{
   }
 
  
-  static filterStudent(collegeID, batch_id, dept_id, section_id, group_id) {
+ static filterStudent(collegeID, batch_id, dept_id, section_id, group_id) {
 
   return new Promise((resolve, reject) => {
 
-    let query = 'SELECT * FROM students WHERE collegeID = ?';
+    let query = `
+      SELECT 
+        s.id,
+        s.fullname,
+        s.email,
+        s.rollno,
+        s.mobileno,
+        s.image,
+        d.department_name,
+        sec.section_name,
+        g.group_name,
+        b.batch_name,
+        sem.semester_number
+      FROM students s
+      JOIN departments d ON s.dept_id = d.id
+      JOIN sections sec ON s.section_id = sec.id
+      JOIN groups_table g ON s.group_id = g.id
+      JOIN batches b ON s.batch_id = b.id
+      JOIN semesters sem ON s.sem_id = sem.id
+      WHERE s.collegeID = ?
+    `;
+
     let params = [collegeID];
 
     if (batch_id) {
-      query += ' AND batch_id = ?';
+      query += ' AND s.batch_id = ?';
       params.push(batch_id);
     }
 
     if (dept_id) {
-      query += ' AND dept_id = ?';
+      query += ' AND s.dept_id = ?';
       params.push(dept_id);
     }
 
     if (section_id) {
-      query += ' AND section_id = ?';
+      query += ' AND s.section_id = ?';
       params.push(section_id);
     }
 
     if (group_id) {
-      query += ' AND group_id = ?';
+      query += ' AND s.group_id = ?';
       params.push(group_id);
     }
 
@@ -81,30 +102,53 @@ class Students{
 }
 
 
- static filterStudent_Attendance(collegeID, batch_id, dept_id, section_id,sem_id) {
+ 
+
+static filterStudent_Attendance(collegeID, batch_id, dept_id, section_id, sem_id) {
 
   return new Promise((resolve, reject) => {
 
-    let query = 'SELECT * FROM students WHERE collegeID = ?';
+    let query = `
+      SELECT 
+        s.id,
+        s.fullname,
+        s.email,
+        s.rollno,
+        s.mobileno,
+        s.image,
+        d.department_name,
+        sec.section_name,
+        g.group_name,
+        b.batch_name,
+        sem.semester_number
+      FROM students s
+      JOIN departments d ON s.dept_id = d.id
+      JOIN sections sec ON s.section_id = sec.id
+      JOIN groups_table g ON s.group_id = g.id
+      JOIN batches b ON s.batch_id = b.id
+      JOIN semesters sem ON s.sem_id = sem.id
+      WHERE s.collegeID = ?
+    `;
+
     let params = [collegeID];
 
     if (batch_id) {
-      query += ' AND batch_id = ?';
+      query += ' AND s.batch_id = ?';
       params.push(batch_id);
     }
 
     if (dept_id) {
-      query += ' AND dept_id = ?';
-      params.push(department);
+      query += ' AND s.dept_id = ?';
+      params.push(dept_id); 
     }
 
     if (section_id) {
-      query += ' AND section_id = ?';
-      params.push(section_id);   
+      query += ' AND s.section_id = ?';
+      params.push(section_id);
     }
 
     if (sem_id) {
-      query += ' AND sem_id = ?';  
+      query += ' AND s.sem_id = ?';
       params.push(sem_id);
     }
 
@@ -118,7 +162,6 @@ class Students{
 
   });
 }
-
 
 
 
