@@ -209,7 +209,7 @@ static updateStudent(id,data,callback){
 UPDATE students 
 SET fullname=?, rollno=?, regd_no=?, mobileno=?, email=?, 
 batch_id=?, dept_id=?, sem_id=?, section_id=?,group_id=?, image=? 
-WHERE id=?  AND college_id = ?`;
+WHERE id=?  AND collegeID = ?`;
 
    db.query(query,
        [
@@ -226,7 +226,7 @@ WHERE id=?  AND college_id = ?`;
         data.group_id,
        
         data.image
-        ,id,data.college_id
+        ,id,data.collegeID
       ],
       callback
     )
