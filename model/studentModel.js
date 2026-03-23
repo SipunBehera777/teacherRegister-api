@@ -111,6 +111,7 @@ static filterStudent_Attendance(collegeID, batch_id, dept_id, section_id, sem_id
     let query = `
       SELECT 
         s.id,
+        s.collegeID,
         s.fullname,
         s.email,
         s.rollno,
