@@ -200,39 +200,37 @@ exports.updateStudent = (req, res) => {
   const id = req.params.id;
 
   if (!id) {
-    return res.status(400).json({
-      success: false,
-      message: "Student ID required"
-    });
+    return res.status(400).json({ success: false, message: "ID required" });
   }
 
   const image = req.file ? req.file.path : req.body.image;
 
+  // MAP THE DATA HERE
   const updatedData = {
-    ...req.body,
-    image
+    fullname: req.body.fullname,
+    rollno: req.body.rollno,
+    regd_no: req.body.regd_no,
+    dept_id: req.body.dept_id,
+    batch_id: req.body.batch_id,
+    section_id: req.body.section_id,
+    sem_id: req.body.sem_id,
+    group_id: req.body.group_id,
+    email: req.body.email,
+    mobileno: req.body.mobileno,
+    image: image,
+    collegeID: req.body.college_id // IMPORTANT: Map 'college_id' to 'collegeID'
   };
 
   Students.updateStudent(id, updatedData, (err, result) => {
     if (err) {
-      console.error("Update Error:", err);
-      return res.status(500).json({
-        success: false,
-        error: err.sqlMessage || err.message
-      });
+      return res.status(500).json({ success: false, error: err.message });
     }
 
     if (result.affectedRows === 0) {
-      return res.status(404).json({
-        success: false,
-        message: "Student not found"
-      });
+      return res.status(404).json({ success: false, message: "Student not found" });
     }
 
-    res.status(200).json({
-      success: true,
-      message: "Student Updated Successfully",
-      imageUrl: image
-    });
+    res.status(200).json({ success: true, message: "Updated Successfully" });
   });
+
 };

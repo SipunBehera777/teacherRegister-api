@@ -205,16 +205,23 @@ static getStudentById(id,callback){
 
 
 
-static updateStudent(id,data,callback){
- let query = `
-UPDATE students 
-SET fullname=?, rollno=?, regd_no=?, mobileno=?, email=?, 
-batch_id=?, dept_id=?, sem_id=?, section_id=?,group_id=?, image=? 
-WHERE id=?  AND collegeID = ?`;
+static updateStudent(id, data, callback) {
+    const query = `
+        UPDATE students 
+        SET fullname = ?, 
+            rollno = ?, 
+            regd_no = ?, 
+            mobileno = ?, 
+            email = ?, 
+            batch_id = ?, 
+            dept_id = ?, 
+            sem_id = ?, 
+            section_id = ?, 
+            group_id = ?, 
+            image = ? 
+        WHERE id = ? AND collegeID = ?`;
 
-   db.query(query,
-       [
-       
+    const values = [
         data.fullname,
         data.rollno,
         data.regd_no,
@@ -225,14 +232,12 @@ WHERE id=?  AND collegeID = ?`;
         data.sem_id,
         data.section_id,
         data.group_id,
-       
-        data.image
-        ,id,data.collegeID
-      ],
-      callback
-    )
+        data.image,
+        id,              // Matches the first ? in WHERE
+        data.collegeID   // Matches the second ? in WHERE
+    ];
 
-    ;
+    db.query(query, values, callback);
 }
 
     
