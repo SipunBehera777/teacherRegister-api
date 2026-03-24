@@ -43,6 +43,14 @@ class QRAttendance {
 
     }
 
+     static checkAlreadyMarked(student_id, attendance_id, callback) {
+        const sql = `
+            SELECT id FROM attendance_details
+            WHERE student_id=? AND attendance_id=?
+        `;
+        db.query(sql, [student_id, attendance_id], callback);
+    }
+
     static markAttendance(data, callback) {
 
         const sql = `

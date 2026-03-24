@@ -1,5 +1,5 @@
  const QR = require("../model/qrAttendanceModel");
-const getDistance = require("../Config/distance");
+const calculateDistance = require("../Config/distance");
 const moment = require("moment-timezone");
 const { v4: uuidv4 } = require("uuid");
 
@@ -68,52 +68,83 @@ exports.startQRSession = (req, res) => {
  
  
  
- 
- // MARK ATTENDANCE
-// ==============================
-exports.markAttendance = (req, res) => {
-    const { studentid, token, latitude, longitude } = req.body;
+ exports.markAttendance = (req, res) => {
 
-    QR.getSessionByToken(token, (err, session) => {
-        if (err || session.length === 0) {
-            return res.json({ success: false, message: "Invalid QR" });
+    const { qrToken, latitude, longitude, student_id } = req.body;
+
+    // Validation
+    if (!qrToken || !latitude || !longitude || !student_id) {
+        return res.status(400).json({ message: "Missing required fields" });
+    }
+
+    // 1️Get session
+    QR.getSessionByToken(qrToken, (err, sessionResult) => {
+
+        if (err) return res.status(500).json(err);
+
+        if (sessionResult.length === 0) {
+            return res.status(400).json({ message: "Invalid QR" });
         }
 
-        const s = session[0];
+        const session = sessionResult[0];
 
-        // Check expiry
-        if (new Date() > new Date(s.expiry_time)) {
-            return res.json({ success: false, message: "QR Expired" });
+        // 2️Check expiry
+        const now = new Date();
+        if (new Date(session.expiry_time) < now) {
+            return res.status(400).json({ message: "QR Expired" });
         }
 
-        // Check classroom distance
-        const distance = getDistance(latitude, longitude, s.class_latitude, s.longitude);
-        if (distance > s.class_radius) {
-            return res.json({ success: false, message: "Not in classroom" });
-        }
+        // 3️ Check distance
+        const distance = calculateDistance(
+            latitude,
+            longitude,
+            session.latitude,
+            session.longitude
+        );
 
-        // Check already marked
-        QR.checkAlreadyMarked(studentid, s.id, (err, result) => {
-            if (result.length > 0) {
-                return res.json({ success: false, message: "Attendance already marked" });
-            }
-
-            const data = {
-                attendanceid: s.id,
-                status: "present",
-                studentid: studentid,
-                marked_time: moment().tz("Asia/Kolkata").format("YYYY-MM-DD HH:mm:ss"),
-                latitude,
-                longitude
-            };
-
-            QR.markAttendance(data, (err, result) => {
-                if (err) {
-                    console.log(err);
-                    return res.json({ success: false, message: "Error marking attendance" });
-                }
-                return res.json({ success: true, message: "Attendance marked" });
+        if (distance > session.radius) {
+            return res.status(400).json({
+                message: "Outside allowed area",
+                distance: distance
             });
-        });
+        }
+
+        // 4️Check duplicate
+        QR.checkAlreadyMarked(
+            student_id,
+            session.id,
+            (err, existing) => {
+
+                if (err) return res.status(500).json(err);
+
+                if (existing.length > 0) {
+                    return res.status(400).json({ message: "Already marked" });
+                }
+
+                // 5️ Insert attendance
+                QR.markAttendance({
+                    attendance_id: session.id,
+                    student_id,
+                    latitude,
+                    longitude
+                }, (err, result) => {
+
+                    if (err) {
+
+                        // DB duplicate safety
+                        if (err.code === "ER_DUP_ENTRY") {
+                            return res.status(400).json({ message: "Already marked" });
+                        }
+
+                        return res.status(500).json(err);
+                    }
+
+                    return res.status(200).json({
+                        message: "Attendance marked successfully",
+                        distance: distance
+                    });
+                });
+            }
+        );
     });
 };
