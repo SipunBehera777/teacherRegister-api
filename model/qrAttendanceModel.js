@@ -47,41 +47,30 @@ class QRAttendance {
 
         const sql = `
         INSERT INTO attendance_details
-        (attendance_id,status,student_id,marked_time,latitude,longitude)
-        VALUES (?,?,?,?,?,?)
+        (attendance_id, student_id, status, latitude, longitude, marked_time)
+        VALUES (?, ?, ?, ?, ?, NOW())
         `;
 
         db.query(sql, [
-            data.attendanceid,
-            data.status,
-            data.studentid,
-            data.marked_time,
+            data.attendance_id,
+            data.student_id,
+            data.status || "Present",
             data.latitude,
             data.longitude
         ], callback);
-
     }
 
-    static checkAlreadyMarked(studentid, attendanceid, callback) {
-
-        const sql = `
-        SELECT * FROM attendance_details
-        WHERE student_id=? AND attendance_id=?
-        `;
-
-        db.query(sql, [studentid, attendanceid], callback);
-
-    }
-
+    // Update QR every 10 sec
     static updateSessionToken(data, callback) {
-   const q = `
+        const q = `
             UPDATE attendance_sessions 
-            SET qr_token = ?, start_time = ?, expiry_time = ? 
+            SET qr_token = ?, 
+                start_time = NOW(), 
+                expiry_time = DATE_ADD(NOW(), INTERVAL 10 SECOND)
             WHERE id = ?
         `;
-        db.query(q, data, callback);
-};
-
+        db.query(q, [data.token, data.id], callback);
+    }
 }
 
 module.exports = QRAttendance;
