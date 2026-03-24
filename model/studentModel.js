@@ -184,10 +184,10 @@ static getStudentById(id,callback){
         s.sem_id,
         s.section_id,
         s.batch_id,
+        s.group_id,
         d.department_name,
         sec.section_name,
         g.group_name,
-        g.group_id,
         b.batch_name,
         sem.semester_number
       FROM students s
