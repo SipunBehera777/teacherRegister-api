@@ -15,7 +15,7 @@ exports.startQRSession = (req, res) => {
     const today = moment().tz("Asia/Kolkata").format("YYYY-MM-DD");
     const now = moment().tz("Asia/Kolkata").format("YYYY-MM-DD HH:mm:ss");
     // Set expiry slightly longer than the refresh rate (e.g., 20s) to avoid race conditions
-    const expiry = moment().tz("Asia/Kolkata").add(20, "seconds").format("YYYY-MM-DD HH:mm:ss");
+    const expiry = moment().tz("Asia/Kolkata").add(5, "minutes").format("YYYY-MM-DD HH:mm:ss");
     
     // Create a truly unique token using UUID or Timestamp
     const token = "QR_" + uuidv4().substring(0, 8) + "_" + Date.now();
