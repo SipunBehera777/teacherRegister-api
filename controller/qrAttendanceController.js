@@ -95,12 +95,12 @@ exports.startQRSession = (req, res) => {
         }
 
         // 3️ Check distance
-        const distance = calculateDistance(
-            latitude,
-            longitude,
-            session.latitude,
-            session.longitude
-        );
+       const distance = calculateDistance(
+    latitude,
+    longitude,
+    session.class_latitude,
+    session.longitude
+);
 
         if (distance > session.radius) {
             return res.status(400).json({

@@ -74,7 +74,7 @@ class QRAttendance {
             UPDATE attendance_sessions 
             SET qr_token = ?, 
                 start_time = NOW(), 
-                expiry_time = DATE_ADD(NOW(), INTERVAL 10 SECOND)
+                expiry_time = DATE_ADD(NOW(), INTERVAL 5 MINUTE)
             WHERE id = ?
         `;
         db.query(q, [data.token, data.id], callback);
