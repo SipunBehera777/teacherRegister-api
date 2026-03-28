@@ -57,24 +57,18 @@ exports.getStudentDashboard = (req, res) => {
 
   const studentId = req.params.studentId;
 
-  if (!studentId) {
-    return res.status(400).json({
-      success: false,
-      message: "Student ID is required"
-    });
-  }
-
   Attendance.getAttendanceStats(studentId, (err, data) => {
 
     if (err) {
-      console.error("DB ERROR:", err);
+      console.error("FULL ERROR:", err); // 👈 MUST ADD THIS
+
       return res.status(500).json({
         success: false,
-        message: "Failed to fetch attendance data"
+        message: err.message // 👈 show real error
       });
     }
 
-    return res.status(200).json({
+    res.status(200).json({
       success: true,
       data: data
     });
