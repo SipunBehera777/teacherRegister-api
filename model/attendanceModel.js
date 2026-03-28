@@ -128,7 +128,7 @@ LEFT JOIN attendance_details ad
           name: row.name,
           code: row.code,
           total_classes: row.total_classes,
-          attended_classes: row.attended_classes,
+          attended_classes:Number(row.attended_classes),
           percentage: percentage
         };
       });
