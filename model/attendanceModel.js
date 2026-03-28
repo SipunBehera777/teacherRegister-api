@@ -81,7 +81,59 @@ class Attendance {
     });
   }
 
+static getAttendanceStats(studentId, callback) {
 
+    const sql = `
+      SELECT 
+        s.id,
+        s.subject_name AS name,
+        s.subject_code AS code,
+
+        COUNT(asess.id) AS total_classes,
+
+        COALESCE(SUM(
+          CASE 
+            WHEN ad.status = 'Present' THEN 1 
+            ELSE 0 
+          END
+        ), 0) AS attended_classes
+
+      FROM subjects s
+
+    
+
+      JOIN attendance_sessions asess 
+        ON a.id = asess.assignment_id
+
+      LEFT JOIN attendance_details ad 
+        ON asess.id = ad.attendance_id 
+        AND ad.student_id = ?
+
+      GROUP BY s.id, s.subject_name, s.subject_code
+    `;
+
+    db.query(sql, [studentId], (err, results) => {
+      if (err) return callback(err);
+
+      //  Add percentage
+      const processedData = results.map(row => {
+        const percentage = row.total_classes > 0
+          ? Math.round((row.attended_classes / row.total_classes) * 100)
+          : 0;
+
+        return {
+          subject_id: row.id,
+          name: row.name,
+          code: row.code,
+          total_classes: row.total_classes,
+          attended_classes: row.attended_classes,
+          percentage: percentage
+        };
+      });
+
+      callback(null, processedData);
+    });
+  }
   
 }
 

@@ -50,3 +50,33 @@ exports.editAttendance = (req, res) => {
     res.json({ success:true, message: result.message });
   });
 };
+
+
+
+exports.getStudentDashboard = (req, res) => {
+
+  const studentId = req.params.studentId;
+
+  if (!studentId) {
+    return res.status(400).json({
+      success: false,
+      message: "Student ID is required"
+    });
+  }
+
+  Attendance.getAttendanceStats(studentId, (err, data) => {
+
+    if (err) {
+      console.error("DB ERROR:", err);
+      return res.status(500).json({
+        success: false,
+        message: "Failed to fetch attendance data"
+      });
+    }
+
+    return res.status(200).json({
+      success: true,
+      data: data
+    });
+  });
+};

@@ -6,6 +6,7 @@ router.post("/start", attendanceController.startAttendance);
 
 router.post("/mark", attendanceController.markAttendance);
 
+router.get("/dashboard/:studentId", attendanceController.getStudentDashboard);
 
 
 
