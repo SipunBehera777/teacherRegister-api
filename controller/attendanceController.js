@@ -60,11 +60,11 @@ exports.getStudentDashboard = (req, res) => {
   Attendance.getAttendanceStats(studentId, (err, data) => {
 
     if (err) {
-      console.error("FULL ERROR:", err); // 👈 MUST ADD THIS
+      console.error("FULL ERROR:", err); 
 
       return res.status(500).json({
         success: false,
-        message: err.message // 👈 show real error
+        message: err.message 
       });
     }
 

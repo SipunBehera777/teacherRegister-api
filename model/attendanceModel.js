@@ -101,13 +101,15 @@ static getAttendanceStats(studentId, callback) {
       FROM subjects s
 
     
+LEFT JOIN assign_subject a 
+  ON s.id = a.subject_id   
 
-      JOIN attendance_sessions asess 
-        ON a.id = asess.assignment_id
+LEFT JOIN attendance_sessions asess 
+  ON a.id = asess.assignment_id   
 
-      LEFT JOIN attendance_details ad 
-        ON asess.id = ad.attendance_id 
-        AND ad.student_id = ?
+LEFT JOIN attendance_details ad 
+  ON asess.id = ad.attendance_id 
+  AND ad.student_id = ?
 
       GROUP BY s.id, s.subject_name, s.subject_code
     `;
